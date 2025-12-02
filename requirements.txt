@@ -1,0 +1,14 @@
+streamlit
+yfinance
+pandas
+google-generativeai
+python-dotenv
+plotly
+fingerprint-pro-server-api-sdk
+streamlit
+yfinance
+google-generativeai
+python-dotenv
+plotly
+pandas
+requests
