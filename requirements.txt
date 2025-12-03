@@ -11,4 +11,10 @@ google-generativeai
 python-dotenv
 plotly
 pandas
+streamlit
+yfinance
+google-generativeai
+python-dotenv
+plotly
+pandas
 requests
