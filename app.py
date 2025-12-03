@@ -153,7 +153,7 @@ st.markdown(f"""
         letter-spacing: 1px;
     }}
 
-    /* BUTTONS */
+    /* BUTTONS & LOGO */
     .stockbit-btn {{ background: transparent; border: 1px solid {colors['border']}; color: {colors['text']}; padding: 8px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 0.9rem; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; }}
     .stockbit-btn:hover {{ background: rgba(59, 130, 246, 0.1); border-color: #3b82f6; color: #3b82f6; }}
     
@@ -320,17 +320,13 @@ def render_chart(hist, chart_type="Line", height=500, time_range="1D"):
         try:
             today_date = hist.index[0].date()
             is_friday = today_date.weekday() == 4
-            
-            # Waktu Istirahat
             start_time = dt_time(11, 30) if is_friday else dt_time(12, 0)
             end_time = dt_time(14, 0) if is_friday else dt_time(13, 30)
             
-            # Konversi ke Timezone yang sesuai dengan data
             tz = hist.index.tz
             break_start = datetime.combine(today_date, start_time).replace(tzinfo=tz)
             break_end = datetime.combine(today_date, end_time).replace(tzinfo=tz)
             
-            # 1. Gambar KOTAK (Layer Bawah)
             fig.add_vrect(
                 x0=break_start, x1=break_end, 
                 fillcolor=colors['gap_color'], 
@@ -338,24 +334,21 @@ def render_chart(hist, chart_type="Line", height=500, time_range="1D"):
                 row=1, col=1
             )
             
-            # 2. Gambar TEKS (Layer Atas - Paksa Muncul dengan yref='paper')
             mid_time = break_start + (break_end - break_start)/2
-            
             fig.add_annotation(
                 x=mid_time, 
-                y=0.85, # Posisi di atas (0-1 relative to plot area)
-                yref="paper", # Kunci ke frame, bukan harga
+                y=0.85, 
+                yref="paper", 
                 text="☕ PASAR ISTIRAHAT", 
                 showarrow=False, 
-                font=dict(size=12, color="#FFD700", weight="bold"), # Emas
-                bgcolor="rgba(0,0,0,0.7)", # Hitam transparan
+                font=dict(size=12, color="#FFD700", weight="bold"),
+                bgcolor="rgba(0,0,0,0.7)", 
                 bordercolor="#FFD700",
                 borderwidth=1,
                 borderpad=5,
                 row=1, col=1
             )
-        except Exception: 
-            pass
+        except Exception: pass
 
     g_color = 'rgba(255,255,255,0.05)' if st.session_state.theme_mode == 'dark' else 'rgba(0,0,0,0.05)'
     fig.update_layout(
@@ -375,10 +368,21 @@ def render_chart(hist, chart_type="Line", height=500, time_range="1D"):
     return fig
 
 # ==========================================
-# 5. SIDEBAR
+# 5. SIDEBAR (LOGO UPDATED)
 # ==========================================
 with st.sidebar:
-    st.markdown("### 🦅 SahamWajar")
+    # --- LOGO CLICKABLE ---
+    st.markdown("""
+        <div style="text-align: center; margin-bottom: 25px;">
+            <a href="." target="_self">
+                <img src="https://i.ibb.co.com/Xfrrm6w9/IMG-20251203-202640.png" 
+                     style="border-radius: 12px; width: 100%; max-width: 140px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: transform 0.3s ease;">
+            </a>
+        </div>
+        <style>
+            img:hover { transform: scale(1.05); }
+        </style>
+    """, unsafe_allow_html=True)
     
     mode_btn = "☀️ Light Mode" if st.session_state.theme_mode == 'dark' else "🌙 Dark Mode"
     if st.button(mode_btn):
@@ -394,7 +398,6 @@ with st.sidebar:
     
     st.markdown("---")
     
-    # Callback
     def on_search():
         if st.session_state.search_key:
             st.session_state.target_ticker = st.session_state.search_key.upper()
@@ -486,7 +489,6 @@ else:
                     res_suggest = model.generate_content(p_suggest).text.strip()
                     
                     if res_suggest != "UNKNOWN" and len(res_suggest) == 4:
-                        # NEW UI: KARTU SARAN AI
                         st.markdown(f"""
                         <div class="suggestion-card">
                             <div style="display:flex; align-items:flex-start;">
